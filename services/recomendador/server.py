@@ -1,6 +1,7 @@
 """Serviço HTTP independente, sem dependências externas. Python 3.11+."""
 import argparse
 import json
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import BoundedSemaphore
 from time import perf_counter
@@ -56,15 +57,18 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=3004)
+    parser.add_argument('--host', default=os.environ.get('HOST', '127.0.0.1'))
+    parser.add_argument('--port', type=int, default=int(os.environ.get('PORT', '3004')))
     parser.add_argument('--workers', type=int, default=4)
     args = parser.parse_args()
     if not 1 <= args.workers <= 16:
         parser.error('workers deve estar entre 1 e 16')
+    if not 1 <= args.port <= 65535:
+        parser.error('port deve estar entre 1 e 65535')
     with criar_pool(args.workers) as pool:
-        servidor = ThreadingHTTPServer(('127.0.0.1', args.port), Handler)
+        servidor = ThreadingHTTPServer((args.host, args.port), Handler)
         servidor.pool, servidor.vagas = pool, BoundedSemaphore(2)
-        print(f'Recomendador: http://127.0.0.1:{args.port} ({args.workers} processos)', flush=True)
+        print(f'Recomendador: http://{args.host}:{args.port} ({args.workers} processos)', flush=True)
         try:
             servidor.serve_forever()
         except KeyboardInterrupt:
