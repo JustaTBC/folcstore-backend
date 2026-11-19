@@ -40,6 +40,7 @@ export async function confirmarPedido(compradorId: string, chave: string, dados:
     }, include: { itens: true } });
     await db.itemCarrinho.deleteMany({ where: { compradorId } });
     await db.usuario.update({ where: { id: compradorId }, data: { versaoCarrinho: { increment: 1 } } });
+    await db.versaoCatalogo.update({ where: { id: 1 }, data: { versao: { increment: 1 } } });
     return { pedido, repetido: false };
   });
 }

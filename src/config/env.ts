@@ -2,6 +2,8 @@ import 'dotenv/config';
 import { z } from 'zod';
 
 export const env = z.object({
+  REDIS_URL: z.string().url().refine(value => /^rediss?:\/\//.test(value), 'Use redis:// ou rediss://').optional(),
+  CACHE_CATALOGO_TTL_SEGUNDOS: z.coerce.number().int().min(1).max(300).default(60),
   RECOMMENDER_URL: z.string().url().default('http://127.0.0.1:3004'),
   RECOMMENDER_TIMEOUT_MS: z.coerce.number().int().min(100).max(120000).default(15000),
   PORT: z.coerce.number().int().min(1).max(65535).default(3003),

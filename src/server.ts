@@ -1,6 +1,7 @@
 import { app } from './app';
 import { env } from './config/env';
 import { prisma } from './config/prisma';
+import { encerrarCache } from './integrations/cache-catalogo';
 
 async function iniciar() {
   await prisma.$connect();
@@ -9,11 +10,13 @@ async function iniciar() {
   });
   server.on('error', async error => {
     console.error('Não foi possível iniciar o servidor:', error.message);
+    encerrarCache();
     await prisma.$disconnect();
     process.exit(1);
   });
   for (const sinal of ['SIGINT', 'SIGTERM'] as const) {
     process.once(sinal, () => {
+      encerrarCache();
       server.close(async () => { await prisma.$disconnect(); process.exit(0); });
     });
   }

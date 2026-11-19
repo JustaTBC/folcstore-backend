@@ -1,9 +1,12 @@
 import { RequestHandler } from 'express';
 import { produtoService } from '../services/produto.service';
 import { filtrosSchema, idSchema, produtoSchema } from '../validators/produto.schema';
+import { listarComCache } from '../integrations/cache-catalogo';
 
 export const listar: RequestHandler = async (req, res) => {
-  res.json(await produtoService.listar(filtrosSchema.parse(req.query)));
+  const filtros = filtrosSchema.parse(req.query);
+  const resultado = await listarComCache(filtros, () => produtoService.listar(filtros));
+  res.set('X-Cache-Catalogo', resultado.origem).type('json').send(resultado.corpo);
 };
 export const buscar: RequestHandler = async (req, res) => {
   res.json(await produtoService.buscar(idSchema.parse(req.params.id)));

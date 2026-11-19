@@ -1,5 +1,10 @@
 # FolcStore Backend
 
+## Cache do catálogo
+
+A listagem de produtos tem cache Redis opcional, com invalidação após alterações
+de produtos e estoque. Veja a [configuração e os testes do PI4-198](docs/cache-catalogo.md).
+
 ## Compra local integrada
 
 Carrinho persistido, endereços, checkout transacional, idempotência e histórico
