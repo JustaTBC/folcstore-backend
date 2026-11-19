@@ -13,6 +13,11 @@ enum Perfil {
   ADMIN
 }
 
+model VersaoCatalogo {
+  id Int @id
+  versao Int @default(0)
+}
+
 enum TipoProduto {
   UNICO
   LOTE

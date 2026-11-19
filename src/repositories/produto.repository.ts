@@ -13,9 +13,17 @@ export const produtoRepository = {
       prisma.produto.count({ where }),
     ]),
   buscarPorId: (id: string) => prisma.produto.findUnique({ where: { id }, include }),
-  criar: (data: Prisma.ProdutoUncheckedCreateInput) => prisma.produto.create({ data, include }),
+  criar: (data: Prisma.ProdutoUncheckedCreateInput) => prisma.$transaction(async db => {
+    const produto = await db.produto.create({ data, include });
+    await db.versaoCatalogo.update({ where: { id: 1 }, data: { versao: { increment: 1 } } });
+    return produto;
+  }),
   atualizar: (id: string, data: Prisma.ProdutoUncheckedUpdateInput) =>
-    prisma.produto.update({ where: { id }, data, include }),
+    prisma.$transaction(async db => {
+      const produto = await db.produto.update({ where: { id }, data, include });
+      await db.versaoCatalogo.update({ where: { id: 1 }, data: { versao: { increment: 1 } } });
+      return produto;
+    }),
   buscarCategoria: (id: string) => prisma.categoria.findUnique({ where: { id } }),
   listarCategorias: () => prisma.categoria.findMany({ orderBy: { nome: 'asc' } }),
 };
