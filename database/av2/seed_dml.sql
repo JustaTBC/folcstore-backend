@@ -1,10 +1,4 @@
--- FolcStore | PI4-243 | Povoamento SQL para o DDL da PI4-242.
--- EXCLUSIVAMENTE dados ficticios; sem emails reais, CPF real, telefone real ou credenciais.
--- Usuarios possuem uma string demonstrativa NAO utilizavel para autenticacao.
--- Requer as 13 tabelas de database/av2/ddl.sql, ja criadas na PI4-242.
--- Execucao unica em banco academico com tabelas VAZIAS.
--- Proibido rodar em banco de producao ou em ambiente com dados que devam ser preservados.
--- Executar no psql com -v ON_ERROR_STOP=1; transacao garante tudo-ou-nada.
+
 
 BEGIN;
 SET LOCAL search_path TO public;
